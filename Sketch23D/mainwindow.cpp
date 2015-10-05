@@ -12,3 +12,13 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_actionCreate_Mesh_triggered()
+{
+    ui->widget->stat = 1;
+}
+
+void MainWindow::on_actionClear_triggered()
+{
+    ui->widget->clearScreen();
+}
