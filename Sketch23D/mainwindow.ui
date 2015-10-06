@@ -23,6 +23,9 @@
       <height>411</height>
      </rect>
     </property>
+    <property name="cursor">
+     <cursorShape>CrossCursor</cursorShape>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

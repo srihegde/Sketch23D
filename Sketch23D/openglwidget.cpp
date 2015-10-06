@@ -63,8 +63,8 @@ void OpenGLWidget::initializeGL()
 #endif
     initializeOpenGLFunctions();
     //Enable certain OpenGL states
-    glEnable(GL_DEPTH_TEST); //Enable Z-buffer
-    glEnable(GL_MULTISAMPLE); //Draw smoothed polygons
+//    glEnable(GL_DEPTH_TEST); //Enable Z-buffer
+//    glEnable(GL_MULTISAMPLE); //Draw smoothed polygons
 
     //Create program
     program = createProgram("../proj/Sketch23D/vshader.vs", "../proj/Sketch23D/fshader.fs");
@@ -125,20 +125,17 @@ void OpenGLWidget::paintGL()
 }
 
 
-
-
-/*************************   ANSWERS START FROM HERE   *********************************/
-// (Un)Comment the part(s) to check the code(s).
-
-
-// Ans 1 (a)
 void OpenGLWidget::setupModelTransformation()
 {
     //TODO: Add code here
     // Model Transformation Logic
+//    glm::vec3 trans(10.0f,20.0f,0.0f);
 //    float angle = 15.0f;
-//    glm::vec3 axis_z(0,0,1.0f);
-//    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(15.0f), axis_z);
+//    glm::vec3 axis_z(0,0,1);
+//    glm::vec3 scale(1.0f,2.0f,1.0f);
+
+//    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis_z) * glm::scale(glm::mat4(1.0f),scale)
+//            * glm::translate(glm::mat4(1.0f), trans);
 
 //    //Pass on the viewing matrix to the vertex shader
 //    glUseProgram(program);
@@ -149,74 +146,6 @@ void OpenGLWidget::setupModelTransformation()
 //    }
 //    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(model));
 }
-
-// Ans 1 (b)
-/*void OpenGLWidget::setupModelTransformation()
-{
-    //TODO: Add code here
-    // Model Transformation Logic
-    glm::vec3 scale(1.0f,2.0f,1.0f);
-    glm::mat4 model = glm::scale(glm::mat4(1.0f),scale);
-
-    //Pass on the viewing matrix to the vertex shader
-    glUseProgram(program);
-    vModel_uniform = glGetUniformLocation(program, "vModel");
-    if(vModel_uniform == -1){
-        fprintf(stderr, "Could not bind location: vModel\n");
-        exit(0);
-    }
-    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(model));
-}*/
-
-// Ans 1 (c)
-/*void OpenGLWidget::setupModelTransformation()
-{
-    //TODO: Add code here
-    // Model Transformation Logic
-    glm::vec3 trans(10.0f,20.0f,0.0f);
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), trans);
-
-    //Pass on the viewing matrix to the vertex shader
-    glUseProgram(program);
-    vModel_uniform = glGetUniformLocation(program, "vModel");
-    if(vModel_uniform == -1){
-        fprintf(stderr, "Could not bind location: vModel\n");
-        exit(0);
-    }
-    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(model));
-}*/
-
-// Ans 2
-/*void OpenGLWidget::setupModelTransformation()
-{
-    //TODO: Add code here
-    // Model Transformation Logic
-    glm::vec3 trans(10.0f,20.0f,0.0f);
-    float angle = 15.0f;
-    glm::vec3 axis_z(0,0,1);
-    glm::vec3 scale(1.0f,2.0f,1.0f);
-
-    // ORDER <A,B,C>
-//    glm::mat4 model = glm::translate(glm::mat4(1.0f), trans) * glm::scale(glm::mat4(1.0f),scale)
-//            * glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis_z);
-
-    // ORDER <C,B,A>
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis_z) * glm::scale(glm::mat4(1.0f),scale)
-            * glm::translate(glm::mat4(1.0f), trans);
-
-    //Pass on the viewing matrix to the vertex shader
-    glUseProgram(program);
-    vModel_uniform = glGetUniformLocation(program, "vModel");
-    if(vModel_uniform == -1){
-        fprintf(stderr, "Could not bind location: vModel\n");
-        exit(0);
-    }
-    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(model));
-}*/
-
-/*********************   Please look at the changes in code in "vshader.vs"   ************************/
-
-/*************************   ANSWERS ENDS HERE   *********************************/
 
 
 
