@@ -20,6 +20,8 @@ private slots:
 
     void on_actionClear_triggered();
 
+    void on_actionView_Model_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

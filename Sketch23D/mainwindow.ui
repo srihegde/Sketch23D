@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Sketch23D</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="OpenGLWidget" name="widget" native="true">
@@ -51,6 +51,7 @@
     </property>
     <addaction name="actionClear"/>
     <addaction name="actionCreate_Mesh"/>
+    <addaction name="actionView_Model"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -93,6 +94,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionView_Model">
+   <property name="text">
+    <string>View Model</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>

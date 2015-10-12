@@ -15,10 +15,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionCreate_Mesh_triggered()
 {
-    ui->widget->stat = 1;
+    ui->widget->stat = 2;
 }
 
 void MainWindow::on_actionClear_triggered()
 {
     ui->widget->clearScreen();
+}
+
+void MainWindow::on_actionView_Model_triggered()
+{
+    ui->widget->stat = 1;
 }

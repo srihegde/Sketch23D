@@ -1,54 +1,31 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "openglwidget.h"
-#include "shader_utils.h"
-#include "gl_utils.h"
-#include <vector>
+#include <unistd.h>
 
-#define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#define BUF 100000
 
-
+//Globals
+int oldX, oldY, currentX, currentY;
+bool isDragging=false;
 std::vector<float> buffer;
-bool isDragging = false;
-GLuint attribute_coord2d;
-GLuint vbo, uniform_color;
 
-OpenGLWidget::OpenGLWidget(QWidget *parent) : QGLWidget(parent)
-{
-    this->stat = 0;
-    setMouseTracking(true);
-}
+
+glm::mat4 modelT, viewT, projectionT;//The model, view and projection transformations
 
 OpenGLWidget::~OpenGLWidget()
 {
     glDeleteProgram(program);
 }
 
-
 void OpenGLWidget::clearScreen()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    update();
-}
-
-
-
-void OpenGLWidget::createMesh()
-{
-    buffer.push_back(this->cur_pos[0]);
-    buffer.push_back(this->cur_pos[1]);
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    buffer.clear();
 
     update();
-
-    glDisableVertexAttribArray(attribute_coord2d);
-    glDeleteBuffers(1, &vbo);
+//    update();
 }
+
 
 
 void OpenGLWidget::initializeGL()
@@ -61,29 +38,25 @@ void OpenGLWidget::initializeGL()
         return;
     }
 #endif
-    initializeOpenGLFunctions();
+//    initializeOpenGLFunctions();
     //Enable certain OpenGL states
-//    glEnable(GL_DEPTH_TEST); //Enable Z-buffer
-//    glEnable(GL_MULTISAMPLE); //Draw smoothed polygons
+    glEnable(GL_DEPTH_TEST); //Enable Z-buffer
+    glEnable(GL_MULTISAMPLE); //Draw smoothed polygons
+
+    this->stat = 0;
+    buffer.clear();
 
     //Create program
-    program = createProgram("../proj/Sketch23D/vshader.vs", "../proj/Sketch23D/fshader.fs");
-
-    const char* attribute_name = "coord2d";
-    attribute_coord2d = glGetAttribLocation(program, attribute_name);
-    const char* uniform_name = "color";
-    uniform_color = glGetUniformLocation(program, uniform_name);
+    program = createProgram("../ImageTree/vshader.vs", "../ImageTree/fshader.fs");
 
     //Create cube VAO
+//    createSphereObject();
 //    createCubeObject();
-    if(this->stat == 1)
-        createMesh();
-
 
     //Setup Transformations
-//    setupModelTransformation();
-//    setupViewTransformation();
-//    setupProjectionTransformation();
+    setupModelTransformation();
+    setupViewTransformation();
+    setupProjectionTransformation();
 }
 
 void OpenGLWidget::resizeGL(int w, int h)
@@ -96,93 +69,155 @@ void OpenGLWidget::resizeGL(int w, int h)
 
 void OpenGLWidget::paintGL()
 {
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glUseProgram(program);
-    glEnableVertexAttribArray(attribute_coord2d);
+    /* Clear the background as white */
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    float *buf = &buffer[0];
+    update();
+
     long unsigned s = buffer.size();
 
-    glBufferData(GL_ARRAY_BUFFER, s, buf, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(
-      attribute_coord2d, // attribute
-      2,                 // number of elements per vertex, here (x,y)
-      GL_FLOAT,          // the type of each element
-      GL_FALSE,          // take our values as-is
-      0,                 // no extra data between each position
-      0                  // offset of first element
-    );
+    //printOpenGLError();
+    glUseProgram(program);
+    glBindVertexArray(cube_VAO);
+    onIdle();
+//    glDrawArrays(GL_TRIANGLES, 0, (s/2)/3);
+//    glDrawArrays(GL_POINTS,0,(s/2));
+    glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
+    update();
+    glBindVertexArray(0);
 
-    /* Push each element in buffer_vertices to the vertex shader */
-    glDrawArrays(GL_POINTS, 0, buffer.size()/2);
-    glDeleteBuffers(1, &vbo);
-
-//    for(int i=0;i<size;i++)
-//        std::cout<< v[size]<<" ";
-//    std::cout<<"\n";
 }
+
 
 
 void OpenGLWidget::setupModelTransformation()
 {
-    //TODO: Add code here
-    // Model Transformation Logic
-//    glm::vec3 trans(10.0f,20.0f,0.0f);
-//    float angle = 15.0f;
-//    glm::vec3 axis_z(0,0,1);
-//    glm::vec3 scale(1.0f,2.0f,1.0f);
+    //Modelling transformations (Model -> World coordinates)
+    modelT = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));//Model coordinates are the world coordinates
 
-//    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis_z) * glm::scale(glm::mat4(1.0f),scale)
-//            * glm::translate(glm::mat4(1.0f), trans);
-
-//    //Pass on the viewing matrix to the vertex shader
-//    glUseProgram(program);
-//    vModel_uniform = glGetUniformLocation(program, "vModel");
-//    if(vModel_uniform == -1){
-//        fprintf(stderr, "Could not bind location: vModel\n");
-//        exit(0);
-//    }
-//    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    //Pass on the modelling matrix to the vertex shader
+    glUseProgram(program);
+    vModel_uniform = glGetUniformLocation(program, "vModel");
+    if(vModel_uniform == -1){
+        fprintf(stderr, "Could not bind location: vModel\n");
+        exit(0);
+    }
+    glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(modelT));
 }
-
-
-
 
 void OpenGLWidget::setupViewTransformation()
 {
     //Viewing transformations (World -> Camera coordinates
-//    glm::mat4 view = glm::lookAt(glm::vec3(20.0, 20.0, 100.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-//    //Camera at (0, 0, 20) looking down the negative Z-axis in a right handed coordinate system
+    viewT = glm::lookAt(glm::vec3(40.0, -40.0, 40.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    //Camera at (0, 0, 20) looking down the negative Z-axis in a right handed coordinate system
 
-//    //Pass on the viewing matrix to the vertex shader
-//    glUseProgram(program);
-//    vView_uniform = glGetUniformLocation(program, "vView");
-//    if(vView_uniform == -1){
-//        fprintf(stderr, "Could not bind location: vView\n");
-//        exit(0);
-//    }
-//    glUniformMatrix4fv(vView_uniform, 1, GL_FALSE, glm::value_ptr(view));
+    //Pass on the viewing matrix to the vertex shader
+    glUseProgram(program);
+    vView_uniform = glGetUniformLocation(program, "vView");
+    if(vView_uniform == -1){
+        fprintf(stderr, "Could not bind location: vView\n");
+        exit(0);
+    }
+    glUniformMatrix4fv(vView_uniform, 1, GL_FALSE, glm::value_ptr(viewT));
 }
 
 void OpenGLWidget::setupProjectionTransformation()
 {
-//    //Projection transformation (Orthographic projection)
-//    float aspect = (float)screen_width/(float)screen_height;
-//    float view_height = 100.0f;
-//    glm::mat4 projection = glm::ortho(-view_height*aspect/2.0f, view_height*aspect/2.0f,
-//                                      -view_height/2.0f, view_height/2.0f, 0.1f, 1000.0f);
+    //Projection transformation (Orthographic projection)
+    float aspect = (float)screen_width/(float)screen_height;
+    float view_height = 100.0f;
+    //glm::mat4 projection = glm::ortho(-view_height*aspect/2.0f, view_height*aspect/2.0f, -view_height/2.0f, view_height/2.0f, 0.1f, 1000.0f);
+    glm::mat4 projectionT = glm::perspective(45.0f, aspect, 0.1f, 1000.0f);
 
-//    //Pass on the projection matrix to the vertex shader
+    //Pass on the projection matrix to the vertex shader
+    glUseProgram(program);
+    vProjection_uniform = glGetUniformLocation(program, "vProjection");
+    if(vProjection_uniform == -1){
+        fprintf(stderr, "Could not bind location: vProjection\n");
+        exit(0);
+    }
+    glUniformMatrix4fv(vProjection_uniform, 1, GL_FALSE, glm::value_ptr(projectionT));
+}
+
+
+//Create sphere using spherical parameterization
+//This function could be used to create any other object with spherical parametrization.
+void createSphereObject()
+{
 //    glUseProgram(program);
-//    vProjection_uniform = glGetUniformLocation(program, "vProjection");
-//    if(vProjection_uniform == -1){
-//        fprintf(stderr, "Could not bind location: vProjection\n");
+
+//    //Bind shader variables
+//    vVertex_attrib = glGetAttribLocation(program, "vVertex");
+//    if(vVertex_attrib == -1) {
+//        fprintf(stderr, "Could not bind location: vVertex\n");
 //        exit(0);
 //    }
-//    glUniformMatrix4fv(vProjection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
+//    vNormal_attrib = glGetAttribLocation(program, "vNormal");
+//    if(vNormal_attrib == -1) {
+//        fprintf(stderr, "Could not bind location: vNormal\n");
+//        exit(0);
+//    }
+
+//    //Sphere data: use spherical parameterization to produce points
+//    //(x,y,z) = (r sin th cos ph, t sin th sin ph, r cos th), th \in [0, pi], ph \in [0, 2 pi]
+//    //Generate vertices and normals.
+//#define DELTA_ANGLE 18
+//    int nTheta = 180/DELTA_ANGLE + 1;
+//    int nPhi = 360/DELTA_ANGLE + 1;
+//    float *vertices = new float[nTheta*nPhi*3];
+//    float *normals = new float[nTheta*nPhi*3];
+//    float theta, phi, x, y, z;
+//    float radius = 20.0f;
+//    for (int j = 0; j<nTheta; j++)
+//        for(int i=0; i<nPhi; i++)
+//        {
+//            theta = float(j*DELTA_ANGLE)*M_PI/180.0;
+//            phi = float(i*DELTA_ANGLE)*M_PI/180.0;
+//            x = sinf(theta)*cosf(phi);
+//            y = sinf(theta)*sinf(phi);
+//            z = cos(theta);
+//            normals[(i + j*nPhi)*3 + 0] = x; normals[(i + j*nPhi)*3 + 1] = y; normals[(i + j*nPhi)*3 + 2] = z;
+//            vertices[(i + j*nPhi)*3 + 0] = radius*x; vertices[(i + j*nPhi)*3 + 1] = radius*y; vertices[(i + j*nPhi)*3 + 2] = radius*z;
+//        }
+
+//    //Generate index array
+//    GLushort *indices = new GLushort[2*(nTheta-1)*(nPhi-1)*3];
+//    for(int j=0; j<(nTheta-1); j++)
+//        for(int i=0; i<(nPhi-1); i++)
+//        {
+//            //Upper triangle
+//            indices[(i + j*(nPhi-1))*6 + 0] = i + j*nPhi;
+//            indices[(i + j*(nPhi-1))*6 + 1] = i + (j+1)*nPhi;
+//            indices[(i + j*(nPhi-1))*6 + 2] = i + 1 + j*nPhi;
+
+//            //Lower triangle
+//            indices[(i + j*(nPhi-1))*6 + 3] = i + 1 + j*nPhi;
+//            indices[(i + j*(nPhi-1))*6 + 4] = i + (j+1)*nPhi;
+//            indices[(i + j*(nPhi-1))*6 + 5] = i + 1 + (j+1)*nPhi;
+//        }
+
+//    //Generate vertex buffer and index buffer
+//    glGenBuffers(1, &vertex_VBO);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertex_VBO);
+//    glBufferData(GL_ARRAY_BUFFER, nTheta*nPhi*3*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+//    delete []vertices;
+
+//    glGenBuffers(1, &normal_VBO);
+//    glBindBuffer(GL_ARRAY_BUFFER, normal_VBO);
+//    glBufferData(GL_ARRAY_BUFFER, nTheta*nPhi*3*sizeof(GLfloat), normals, GL_STATIC_DRAW);
+//    delete []normals;
+
+//    glGenBuffers(1, &indices_IBO);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_IBO);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (nTheta-1)*(nPhi-1)*6*sizeof(GLushort), indices, GL_STATIC_DRAW);
+//    delete []indices;
+
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+
 
 void OpenGLWidget::createCubeObject()
 {
@@ -252,21 +287,148 @@ void OpenGLWidget::createCubeObject()
 //    glBindVertexArray(0); //Unbind the VAO to disable changes outside this function.
 }
 
+void OpenGLWidget::setupLighting()
+{
+//    float light_position[] = {100, 50, 0};
+
+//    glUseProgram(program);
+//    vLightPosition_uniform = glGetUniformLocation(program, "vLightPosition");
+//    if(vLightPosition_uniform == -1)
+//    {
+//        fprintf(stderr, "Could not bind uniform: vLightPosition\n");
+//        exit(0);
+//    }
+//    glUniform3f(vLightPosition_uniform, light_position[0], light_position[1], light_position[2]);
+}
+
+glm::vec3 OpenGLWidget::getTrackBallVector(int x, int y)
+{
+    glm::vec3 p = glm::vec3(2.0*x/screen_width - 1.0, 2.0*y/screen_height - 1.0, 0.0); //Normalize to [-1, +1]
+    p.y = -p.y; //Invert Y since screen coordinate and OpenGL coordinates have different Y directions.
+
+    float mag2 = p.x*p.x + p.y*p.y;
+    if(mag2 <= 1.0)
+        p.z = sqrt(1.0 - mag2);
+    else
+        p = glm::normalize(p); //Nearest point, close to the sides of the trackball
+    return p;
+}
+
+void OpenGLWidget::createMesh()
+{
+    glUseProgram(program);
+
+    vVertex_attrib = glGetAttribLocation(program, "vVertex");
+    if(vVertex_attrib == -1) {
+        fprintf(stderr, "Could not bind location: vVertex\n");
+        exit(0);
+    }
+    vColor_attrib = glGetAttribLocation(program, "vColor");
+    if(vColor_attrib == -1) {
+        fprintf(stderr, "Could not bind location: vColor\n");
+        exit(0);
+    }
+    glUniform3f(vColor_attrib, 0.0f, 0.0f, 1.0f);
+
+    float *obj_vertices = &buffer[0];
+    long unsigned s = buffer.size();
+
+    GLushort obj_indices[BUF];
+    for (int i = 0, j = 0; i < s/2-1; ++i, j+=2)
+    {
+       obj_indices[j] = i;
+       obj_indices[j+1] = i+1;
+    }
+
+    //Generate VAO object
+    glGenVertexArrays(1, &cube_VAO);
+    glBindVertexArray(cube_VAO);
+
+    //Create VBOs for the VAO
+    //Position information (data + format)
+    GLfloat *expanded_vertices = new GLfloat[s*3];
+    for(int i=0; i<(s/2-1); i++) {
+        expanded_vertices[i*3] = obj_vertices[obj_indices[i]*2];
+        expanded_vertices[i*3 + 1] = obj_vertices[obj_indices[i]*2+1];
+        expanded_vertices[i*3 + 2] = 0.0f;
+    }
+    GLuint vertex_VBO;
+    glGenBuffers(1, &vertex_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_VBO);
+    glBufferData(GL_ARRAY_BUFFER, (s/2-1)*3*sizeof(GLfloat), expanded_vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(vVertex_attrib);
+    glVertexAttribPointer(vVertex_attrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    delete []expanded_vertices;
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+//    for (int i = 0; i < s; ++i) {
+//        printf("%f ",obj_vertices[i]);
+//    }
+//    printf("\n");
+
+//    for (int i = 0; i < 2*(s/2 - 1); ++i) {
+//        printf("%d ",obj_indices[i]);
+//    }
+//    printf("\n");
+//    printf("\n");
+
+//    for (int i = 0; i < s; ++i) {
+//        printf("%f ",buffer[i]);
+//    }
+//    printf("\n");
+}
+
+
+void OpenGLWidget::onIdle()
+{
+    if((currentX !=oldX || currentY != oldY ) && this->stat == 1)
+    {
+        glm::vec3 va = getTrackBallVector(oldX, oldY);
+        glm::vec3 vb = getTrackBallVector(currentX, currentY);
+        float angle = acos(fmin(1.0f, glm::dot(va, vb)));
+        glm::vec3 axis_in_camera_coord = glm::cross(va, vb);
+        glm::mat3 camera2object = glm::inverse(glm::mat3(viewT*modelT));
+        glm::vec3 axis_in_object_coord = camera2object * axis_in_camera_coord;
+        modelT = glm::rotate(modelT, angle, axis_in_object_coord);
+        glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(modelT));
+        oldX = currentX;
+        oldY = currentY;
+
+    }
+
+    if((currentX !=oldX || currentY != oldY ) && this->stat == 2 && isDragging)
+    {
+        long unsigned s = buffer.size();
+
+        buffer.push_back((2.0*currentX/screen_width - 1.0)*40.0f);
+        buffer.push_back((1.0 - 2.0*currentY/screen_height)*40.0f);
+        createMesh();
+    }
+}
+
+
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *mev)
 {
     if(isDragging)
     {
-        this->cur_pos[0] = (float)(2*(mev->x())/(float)this->screen_width) - 1;
-        this->cur_pos[1] = 1 - (float)(2*(mev->y())/(float)this->screen_width);
+        currentX = mev->x();
+        currentY = mev->y();
+//        usleep(10000);
+//        buffer.push_back((2.0*currentX/screen_width - 1.0)*40.0f);
+//        buffer.push_back((1.0 - 2.0*currentY/screen_height)*40.0f);
+
+        repaint();
     }
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *mev)
 {
     isDragging = true;
-
-    this->cur_pos[0] = (float)(2*(mev->x())/(float)this->screen_width) - 1;
-    this->cur_pos[1] = 1 - (float)(2*(mev->y())/(float)this->screen_width);
+    currentX = oldX = mev->x();
+    currentY = oldY = mev->y();
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *mev)
