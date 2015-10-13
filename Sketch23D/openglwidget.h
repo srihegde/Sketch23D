@@ -44,7 +44,6 @@ protected:
     void setupModelTransformation();
     void setupViewTransformation();
     void setupProjectionTransformation();
-    void createSphereObject();
     void createCubeObject();
     void setupLighting();
 
@@ -54,6 +53,7 @@ protected:
     glm::vec3 getTrackBallVector(int x, int y);
     void onIdle();
     void createMesh();
+    void silehouteToMesh();
 
 private:
     GLuint program;

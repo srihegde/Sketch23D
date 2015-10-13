@@ -1,4 +1,5 @@
 #include "openglwidget.h"
+#include "mesher.h"
 #include <unistd.h>
 
 #define BUF 100000
@@ -50,7 +51,6 @@ void OpenGLWidget::initializeGL()
     program = createProgram("../ImageTree/vshader.vs", "../ImageTree/fshader.fs");
 
     //Create cube VAO
-//    createSphereObject();
 //    createCubeObject();
 
     //Setup Transformations
@@ -139,84 +139,6 @@ void OpenGLWidget::setupProjectionTransformation()
     }
     glUniformMatrix4fv(vProjection_uniform, 1, GL_FALSE, glm::value_ptr(projectionT));
 }
-
-
-//Create sphere using spherical parameterization
-//This function could be used to create any other object with spherical parametrization.
-void createSphereObject()
-{
-//    glUseProgram(program);
-
-//    //Bind shader variables
-//    vVertex_attrib = glGetAttribLocation(program, "vVertex");
-//    if(vVertex_attrib == -1) {
-//        fprintf(stderr, "Could not bind location: vVertex\n");
-//        exit(0);
-//    }
-//    vNormal_attrib = glGetAttribLocation(program, "vNormal");
-//    if(vNormal_attrib == -1) {
-//        fprintf(stderr, "Could not bind location: vNormal\n");
-//        exit(0);
-//    }
-
-//    //Sphere data: use spherical parameterization to produce points
-//    //(x,y,z) = (r sin th cos ph, t sin th sin ph, r cos th), th \in [0, pi], ph \in [0, 2 pi]
-//    //Generate vertices and normals.
-//#define DELTA_ANGLE 18
-//    int nTheta = 180/DELTA_ANGLE + 1;
-//    int nPhi = 360/DELTA_ANGLE + 1;
-//    float *vertices = new float[nTheta*nPhi*3];
-//    float *normals = new float[nTheta*nPhi*3];
-//    float theta, phi, x, y, z;
-//    float radius = 20.0f;
-//    for (int j = 0; j<nTheta; j++)
-//        for(int i=0; i<nPhi; i++)
-//        {
-//            theta = float(j*DELTA_ANGLE)*M_PI/180.0;
-//            phi = float(i*DELTA_ANGLE)*M_PI/180.0;
-//            x = sinf(theta)*cosf(phi);
-//            y = sinf(theta)*sinf(phi);
-//            z = cos(theta);
-//            normals[(i + j*nPhi)*3 + 0] = x; normals[(i + j*nPhi)*3 + 1] = y; normals[(i + j*nPhi)*3 + 2] = z;
-//            vertices[(i + j*nPhi)*3 + 0] = radius*x; vertices[(i + j*nPhi)*3 + 1] = radius*y; vertices[(i + j*nPhi)*3 + 2] = radius*z;
-//        }
-
-//    //Generate index array
-//    GLushort *indices = new GLushort[2*(nTheta-1)*(nPhi-1)*3];
-//    for(int j=0; j<(nTheta-1); j++)
-//        for(int i=0; i<(nPhi-1); i++)
-//        {
-//            //Upper triangle
-//            indices[(i + j*(nPhi-1))*6 + 0] = i + j*nPhi;
-//            indices[(i + j*(nPhi-1))*6 + 1] = i + (j+1)*nPhi;
-//            indices[(i + j*(nPhi-1))*6 + 2] = i + 1 + j*nPhi;
-
-//            //Lower triangle
-//            indices[(i + j*(nPhi-1))*6 + 3] = i + 1 + j*nPhi;
-//            indices[(i + j*(nPhi-1))*6 + 4] = i + (j+1)*nPhi;
-//            indices[(i + j*(nPhi-1))*6 + 5] = i + 1 + (j+1)*nPhi;
-//        }
-
-//    //Generate vertex buffer and index buffer
-//    glGenBuffers(1, &vertex_VBO);
-//    glBindBuffer(GL_ARRAY_BUFFER, vertex_VBO);
-//    glBufferData(GL_ARRAY_BUFFER, nTheta*nPhi*3*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-//    delete []vertices;
-
-//    glGenBuffers(1, &normal_VBO);
-//    glBindBuffer(GL_ARRAY_BUFFER, normal_VBO);
-//    glBufferData(GL_ARRAY_BUFFER, nTheta*nPhi*3*sizeof(GLfloat), normals, GL_STATIC_DRAW);
-//    delete []normals;
-
-//    glGenBuffers(1, &indices_IBO);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_IBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (nTheta-1)*(nPhi-1)*6*sizeof(GLushort), indices, GL_STATIC_DRAW);
-//    delete []indices;
-
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
 
 
 void OpenGLWidget::createCubeObject()
@@ -374,11 +296,14 @@ void OpenGLWidget::createMesh()
 //    }
 //    printf("\n");
 //    printf("\n");
+    update();
+}
 
-//    for (int i = 0; i < s; ++i) {
-//        printf("%f ",buffer[i]);
-//    }
-//    printf("\n");
+void OpenGLWidget::silehouteToMesh()
+{
+    std::vector<float> inPts = meshCreator(buffer, screen_width, screen_height);
+
+    // Drawing tesselated mesh.
 }
 
 
@@ -399,13 +324,22 @@ void OpenGLWidget::onIdle()
 
     }
 
-    if((currentX !=oldX || currentY != oldY ) && this->stat == 2 && isDragging)
+    if((fabs(currentX - oldX) > 3.0 && fabs(currentY - oldY) > 3.0 ) && this->stat == 2 && isDragging)
     {
         long unsigned s = buffer.size();
+        float rat = (float)screen_height/(float)screen_width;
 
-        buffer.push_back((2.0*currentX/screen_width - 1.0)*40.0f);
-        buffer.push_back((1.0 - 2.0*currentY/screen_height)*40.0f);
+        buffer.push_back((((float)currentX - (float)screen_width/2)/7.0f) );
+        buffer.push_back((((float)screen_height/2 - (float)currentY)/7.0f)  );
+
+//        buffer.push_back((2*((float)currentX/(float)screen_width) - 1.0) * 10.0);
+//        buffer.push_back((1.0 - 2*((float)currentY/(float)screen_height)) * 10.0);
+
         createMesh();
+
+        oldX = currentX;
+        oldY = currentY;
+        update();
     }
 }
 
@@ -416,11 +350,10 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *mev)
     {
         currentX = mev->x();
         currentY = mev->y();
+        update();
 //        usleep(10000);
-//        buffer.push_back((2.0*currentX/screen_width - 1.0)*40.0f);
-//        buffer.push_back((1.0 - 2.0*currentY/screen_height)*40.0f);
-
-        repaint();
+//        buffer.push_back((((float)currentX - (float)screen_width/2)/10.0f) );
+//        buffer.push_back((((float)screen_height/2 - (float)currentY)/10.0f)  );
     }
 }
 
@@ -429,10 +362,18 @@ void OpenGLWidget::mousePressEvent(QMouseEvent *mev)
     isDragging = true;
     currentX = oldX = mev->x();
     currentY = oldY = mev->y();
+    update();
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *mev)
 {
     isDragging = false;
+    for (int i = 0; i < buffer.size(); ++i) {
+        printf("%f ",buffer[i]);
+    }
+    printf("\n");
+    printf("\n");
+
+    silehouteToMesh();
     update();
 }
