@@ -32,6 +32,7 @@ class OpenGLWidget : public QGLWidget
 {
 public:
     OpenGLWidget(QWidget *parent) : QGLWidget(parent) {}
+    OpenGLWidget();
     ~OpenGLWidget();
     void clearScreen();
     int stat;

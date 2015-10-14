@@ -1,3 +1,16 @@
+/*
+//  THINGS LEFT TO BE DONE IN 3D-PAINTER
+//
+//  1. Plane adjustment for accurate drawing.
+//  2. Loop end checking and validation.
+//  3. Adding mesh to the silhoute.
+//  4. Dynamic size expansion of the viewer.
+//  5. File saving and loading options.
+//  6. Undo and Redo options
+//
+*/
+//************************************************************************************************************
+
 #include "openglwidget.h"
 #include "mesher.h"
 #include <unistd.h>
@@ -8,9 +21,15 @@
 int oldX, oldY, currentX, currentY;
 bool isDragging=false;
 std::vector<float> buffer;
-
+std::vector<float> inPts;
 
 glm::mat4 modelT, viewT, projectionT;//The model, view and projection transformations
+
+
+OpenGLWidget::OpenGLWidget()
+{
+    setMouseTracking(true);
+}
 
 OpenGLWidget::~OpenGLWidget()
 {
@@ -22,9 +41,7 @@ void OpenGLWidget::clearScreen()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0, 1.0, 1.0, 1.0);
     buffer.clear();
-
     update();
-//    update();
 }
 
 
@@ -52,6 +69,7 @@ void OpenGLWidget::initializeGL()
 
     //Create cube VAO
 //    createCubeObject();
+    clearScreen();
 
     //Setup Transformations
     setupModelTransformation();
@@ -73,17 +91,28 @@ void OpenGLWidget::paintGL()
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    update();
 
-    long unsigned s = buffer.size();
+    long unsigned s = buffer.size(), s1 = inPts.size();
 
     //printOpenGLError();
     glUseProgram(program);
     glBindVertexArray(cube_VAO);
     onIdle();
+
 //    glDrawArrays(GL_TRIANGLES, 0, (s/2)/3);
 //    glDrawArrays(GL_POINTS,0,(s/2));
-    glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
+
+//    if(this->stat == 2)
+        glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
+//    else
+//    {
+//        silehouteToMesh();
+//        for (int i = 0; i<s1; i+=3)
+//        {
+//            glDrawArrays(GL_LINE_LOOP,i,i+3);
+//        }
+//    }
+//    inPts.clear();
     update();
     glBindVertexArray(0);
 
@@ -301,9 +330,125 @@ void OpenGLWidget::createMesh()
 
 void OpenGLWidget::silehouteToMesh()
 {
-    std::vector<float> inPts = meshCreator(buffer, screen_width, screen_height);
+
+//    glUseProgram(program);
+//    glEnableVertexAttribArray(attribute_coord2d);
+//    mesher();
+//    GLfloat triangle_vertices[vectorarr.size()];
+//    std::cout << "vector size" << vectorarr.size() << std::endl;
+
+//    //printf("%d",ArraySize);
+//    for(unsigned int i=0;i<8/* && vectorarr.size()%6==0*/;i++){
+//        triangle_vertices[i]=vectorarr[i];
+//        std::cout << "vector coor" << vectorarr[i] << std::endl;
+//       // printf("%f\n",vectorarr[i]);
+//       }
+//    /* Describe our vertices array to OpenGL (it can't guess its format automatically) */
+//    glVertexAttribPointer(
+//      attribute_coord2d, // attribute
+//      2,                 // number of elements per vertex, here (x,y)
+//      GL_FLOAT,          // the type of each element
+//      GL_FALSE,          // take our values as-is
+//      0,                 // no extra data between each position
+//      triangle_vertices  // pointer to the C array
+//    );
+
+//    /* Push each element in buffer_vertices to the vertex shader */
+////     if(ArraySize==4 && circle1==0)
+////        glDrawArrays(GL_LINES, 0, 2);
+////     else if(ArraySize>4)
+//    glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+//      for (int j = 8; j < vectorarr.size(); j+=6)
+//      {
+//          for(int i=j;i<j+6;i++)
+//               triangle_vertices[i%6] = vectorarr[i];
+
+//          glVertexAttribPointer(
+//            attribute_coord2d, // attribute
+//            2,                 // number of elements per vertex, here (x,y)
+//            GL_FLOAT,          // the type of each element
+//            GL_FALSE,          // take our values as-is
+//            0,                 // no extra data between each position
+//            triangle_vertices  // pointer to the C array
+//          );
+//          glDrawArrays(GL_LINE_LOOP, 0, 3);
+//      }
+//         // std::cout << "vector size" << triangle_vertices[i] << std::endl;
+//         // printf("%f\n",vectorarr[i]);
+//      /* Describe our vertices array to OpenGL (it can't guess its format automatically) */
+
+
+////       /* Push each element in buffer_vertices to the vertex shader */
+////  //     if(ArraySize==4 && circle1==0)
+////  //        glDrawArrays(GL_LINES, 0, 2);
+////  //     else if(ArraySize>4)
+////         glDrawArrays(GL_LINE_LOOP, 0, 3);
+////        j+=6;
+////       }
+////     else if(ArraySize==4 && circle1==1){
+////         GLfloat r;
+////         GLfloat Pi = 2*M_PI;
+////         r= sqrt(pow(triangle_vertices[0]-triangle_vertices[2],2)+pow(triangle_vertices[1]-triangle_vertices[3],2));
+////         glBegin(GL_LINE_LOOP);
+////            for(int j=0;j<1000;j++){
+////                glVertex2f(triangle_vertices[0]+(r * cos(j * Pi/1000)),triangle_vertices[1]+(r * sin(j * Pi/1000)));
+////            }
+////         glEnd();
+////        // circle2(triangle_vertices,ArraySize);
+////     }
+//    glDisableVertexAttribArray(attribute_coord2d);
+//    vectorarr.clear();
+//    glDeleteProgram(program);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    inPts = meshCreator(screen_width, screen_height);
+    unsigned long s = inPts.size();
 
     // Drawing tesselated mesh.
+    float *expanded_vertices = &inPts[0];
+
+    glUseProgram(program);
+
+    vVertex_attrib = glGetAttribLocation(program, "vVertex");
+    if(vVertex_attrib == -1) {
+        fprintf(stderr, "Could not bind location: vVertex\n");
+        exit(0);
+    }
+    vColor_attrib = glGetAttribLocation(program, "vColor");
+    if(vColor_attrib == -1) {
+        fprintf(stderr, "Could not bind location: vColor\n");
+        exit(0);
+    }
+
+     glUniform3f(vColor_attrib, 0.0f, 0.0f, 1.0f);
+
+    //Generate VAO object
+    glGenVertexArrays(1, &cube_VAO);
+    glBindVertexArray(cube_VAO);
+
+    GLuint vertex_VBO;
+    glGenBuffers(1, &vertex_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_VBO);
+    glBufferData(GL_ARRAY_BUFFER, s*sizeof(GLfloat), expanded_vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(vVertex_attrib);
+    glVertexAttribPointer(vVertex_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
 }
 
 
@@ -311,6 +456,7 @@ void OpenGLWidget::onIdle()
 {
     if((currentX !=oldX || currentY != oldY ) && this->stat == 1)
     {
+        long unsigned s = buffer.size();
         glm::vec3 va = getTrackBallVector(oldX, oldY);
         glm::vec3 vb = getTrackBallVector(currentX, currentY);
         float angle = acos(fmin(1.0f, glm::dot(va, vb)));
@@ -321,6 +467,8 @@ void OpenGLWidget::onIdle()
         glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(modelT));
         oldX = currentX;
         oldY = currentY;
+        glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
+        update();
 
     }
 
@@ -340,6 +488,7 @@ void OpenGLWidget::onIdle()
         oldX = currentX;
         oldY = currentY;
         update();
+
     }
 }
 
@@ -351,9 +500,6 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *mev)
         currentX = mev->x();
         currentY = mev->y();
         update();
-//        usleep(10000);
-//        buffer.push_back((((float)currentX - (float)screen_width/2)/10.0f) );
-//        buffer.push_back((((float)screen_height/2 - (float)currentY)/10.0f)  );
     }
 }
 
@@ -368,12 +514,15 @@ void OpenGLWidget::mousePressEvent(QMouseEvent *mev)
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *mev)
 {
     isDragging = false;
-    for (int i = 0; i < buffer.size(); ++i) {
-        printf("%f ",buffer[i]);
-    }
-    printf("\n");
-    printf("\n");
+//    buffer.push_back(buffer[0]);
+//    buffer.push_back(buffer[1]);
 
-    silehouteToMesh();
+//    for (int i = 0; i < buffer.size(); ++i) {
+//        printf("%f ",buffer[i]);
+//    }
+//    printf("\n");
+//    printf("\n");
+
+//    silehouteToMesh();
     update();
 }

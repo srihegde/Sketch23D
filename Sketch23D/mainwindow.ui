@@ -20,7 +20,7 @@
       <x>19</x>
       <y>9</y>
       <width>631</width>
-      <height>411</height>
+      <height>401</height>
      </rect>
     </property>
     <property name="cursor">
@@ -63,6 +63,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
