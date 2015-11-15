@@ -105,7 +105,7 @@ void OpenGLWidget::paintGL()
     glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
     update();
 
-    if(this->stat == 3)
+    if(this->stat == 3 || this->stat == 1)
     {
         silehouteToMesh();
     }
@@ -348,7 +348,6 @@ void OpenGLWidget::silehouteToMesh()
     glBindVertexArray(0);
 
     this->stat = 1;
-
 }
 
 
@@ -357,7 +356,6 @@ void OpenGLWidget::onIdle()
     // For viewing
     if((currentX !=oldX || currentY != oldY ) && this->stat == 1)
     {
-        long unsigned s = buffer.size();
         glm::vec3 va = getTrackBallVector(oldX, oldY);
         glm::vec3 vb = getTrackBallVector(currentX, currentY);
         float angle = acos(fmin(1.0f, glm::dot(va, vb)));
@@ -368,8 +366,6 @@ void OpenGLWidget::onIdle()
         glUniformMatrix4fv(vModel_uniform, 1, GL_FALSE, glm::value_ptr(modelT));
         oldX = currentX;
         oldY = currentY;
-//        glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
-//        update();
 
     }
 
