@@ -26,8 +26,7 @@ std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
       //cdt.insert(Point(2, 0.6));
 
       std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-      std::cout << "Meshing the triangulation with default criterias..."
-                << std::endl;
+      std::cout << "Meshing the triangulation with default criterias..."<< std::endl;
       Mesher mesher(cdt);
       //mesher.refine_mesh();
       //std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
@@ -38,19 +37,23 @@ std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
       mesher.set_criteria(Criteria(0.125, 10));
       mesher.refine_mesh();
       for(CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end();it++)
-          {
-            for(int i=0;i<len-1;i++){
-                float coordx = (cdt.triangle(it)[i].x()/w2);
-                vectorarr.push_back(coordx);
-                float coordy = (cdt.triangle(it)[i].y()/h2);
-                vectorarr.push_back(coordy);}
+      {
+        for(int i=0;i<len-1;i++)
+        {
+            float coordx = (cdt.triangle(it)[i].x()/*/w2*/);
+            vectorarr.push_back(coordx);
+            float coordy = (cdt.triangle(it)[i].y()/*/h2*/);
+            vectorarr.push_back(coordy);
+        }
 
-//                std::cout << vectorarr[count] << " " << vectorarr[count] << std::endl;
-              count++;
-          }
+//           std::cout << vectorarr[count] << " " << vectorarr[count] << std::endl;
+          count++;
+      }
 
 //      std::cout << "Number of vertices: " << cdt.number_of_vertices() << " " << count <<std::endl;
 
+//      for (int i = 0; i < vectorarr.size(); i+=2)
+//          std::cout << vectorarr[i]<<" "<<vectorarr[i+1]<<"\n";
       return vectorarr;
 }
 

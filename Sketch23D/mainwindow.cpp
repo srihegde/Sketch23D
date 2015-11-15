@@ -15,7 +15,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionCreate_Mesh_triggered()
 {
-    ui->widget->stat = 2;
+    ui->widget->stat = 3;
 }
 
 void MainWindow::on_actionClear_triggered()
@@ -26,4 +26,9 @@ void MainWindow::on_actionClear_triggered()
 void MainWindow::on_actionView_Model_triggered()
 {
     ui->widget->stat = 1;
+}
+
+void MainWindow::on_actionDraw_Silehoutte_triggered()
+{
+    ui->widget->stat = 2;
 }

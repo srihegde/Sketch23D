@@ -45,15 +45,15 @@ protected:
     void setupModelTransformation();
     void setupViewTransformation();
     void setupProjectionTransformation();
-    void createCubeObject();
     void setupLighting();
 
     void mouseMoveEvent(QMouseEvent *mev);
     void mousePressEvent(QMouseEvent *mev);
     void mouseReleaseEvent(QMouseEvent *mev);
     glm::vec3 getTrackBallVector(int x, int y);
+    GLfloat computeZ(GLfloat x, GLfloat y);
     void onIdle();
-    void createMesh();
+    void createSilehoute();
     void silehouteToMesh();
 
 private:

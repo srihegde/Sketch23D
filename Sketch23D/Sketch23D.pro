@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-LIBS    += -lGLU -lGLEW -lCGAL -lgmp -L/lib64
+LIBS    += -lGLU -lGLEW -lCGAL -lgmp -L/lib64\
+            `pkg-config opencv --libs`
 
 QMAKE_CXXFLAGS += -frounding-math -O3
 

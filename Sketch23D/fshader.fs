@@ -1,6 +1,6 @@
-uniform vec3 color;
+#version 120
 
-void main(void)
-{
-    gl_FragColor = vec4(color, 1.0);
+varying vec3 fColor;
+void main(void) {
+        gl_FragColor = vec4(fColor, 1.0);
 }

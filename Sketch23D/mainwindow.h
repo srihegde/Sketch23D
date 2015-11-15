@@ -22,6 +22,8 @@ private slots:
 
     void on_actionView_Model_triggered();
 
+    void on_actionDraw_Silehoutte_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

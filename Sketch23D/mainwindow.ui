@@ -6,34 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>492</height>
+    <width>657</width>
+    <height>461</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Sketch23D</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="OpenGLWidget" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>19</x>
-      <y>9</y>
-      <width>631</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>CrossCursor</cursorShape>
-    </property>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="OpenGLWidget" name="widget" native="true">
+      <property name="cursor">
+       <cursorShape>CrossCursor</cursorShape>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>662</width>
+     <width>657</width>
      <height>25</height>
     </rect>
    </property>
@@ -50,6 +46,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionClear"/>
+    <addaction name="actionDraw_Silehoutte"/>
     <addaction name="actionCreate_Mesh"/>
     <addaction name="actionView_Model"/>
    </widget>
@@ -103,6 +100,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionDraw_Silehoutte">
+   <property name="text">
+    <string>Draw Silehoutte</string>
    </property>
   </action>
  </widget>
