@@ -36,29 +36,49 @@ std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
       // See reference manual for Delaunay_mesh_size_traits_2<K>.
       mesher.set_criteria(Criteria(0.125, 10));
       mesher.refine_mesh();
+      std::vector<float> vectorcir;
       for(CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end();it++)
       {
+          //3d
+          float coordcX = (cdt.circumcenter(it).x())/4.0;
+          float coordcY = (cdt.circumcenter(it).y())/4.0;
+          float z=0.0;
+          vectorcir.push_back((cdt.circumcenter(it).x())/4.0);
+          vectorcir.push_back((cdt.circumcenter(it).y())/4.0);
+          //-------
         for(int i=0;i<len-1;i++)
         {
             float coordx = (cdt.triangle(it)[i].x()/*/w2*/);
             vectorarr.push_back(coordx);
             float coordy = (cdt.triangle(it)[i].y()/*/h2*/);
             vectorarr.push_back(coordy);
+            z = sqrt(pow((coordcX-coordx),2.0) + pow((coordcY - coordy),2.0));
+            vectorarr.push_back(z);
+        }
+        for (int i = len-1; i >= 0 ; i--)
+        {
+            float coordx = (cdt.triangle(it)[i].x()/*/w2*/);
+            vectorarr.push_back(coordx);
+            float coordy = (cdt.triangle(it)[i].y()/*/h2*/);
+            vectorarr.push_back(coordy);
+            z = sqrt(pow((coordcX-coordx),2.0) + pow((coordcY - coordy),2.0));
+            vectorarr.push_back(-z);
         }
 
+//        vectorarr = meshAverager(vectorarr);
 //           std::cout << vectorarr[count] << " " << vectorarr[count] << std::endl;
           count++;
       }
 
 //      std::cout << "Number of vertices: " << cdt.number_of_vertices() << " " << count <<std::endl;
 
-//      for (int i = 0; i < vectorarr.size(); i+=2)
-//          std::cout << vectorarr[i]<<" "<<vectorarr[i+1]<<"\n";
+//      for (int i = 0; i < vectorarr.size(); i+=3)
+//          std::cout << vectorarr[i]<<" "<<vectorarr[i+1]<<" "<<vectorarr[i+2]<<"\n";
       return vectorarr;
 }
 
 
-//std::vector<float> meshCreator(int w2, int h2)
+//std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
 //{
 //    std::vector<float> vectorarr;
 //    int count=0;
@@ -84,13 +104,24 @@ std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
 //    // See reference manual for Delaunay_mesh_size_traits_2<K>.
 //    mesher.set_criteria(Criteria(0.125, 5));
 //    mesher.refine_mesh();
+//    std::vector<float> vectorcir;
 //    for(CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end();it++)
 //        {
-//          for(int i=0;i<3;i++){
-//              float coordx = ((cdt.triangle(it)[i].x()/w2)-1)*0.5f;
-//              vectorarr.push_back(coordx);
-//              float coordy = (1-(cdt.triangle(it)[i].y()/h2))*0.5f;
-//              vectorarr.push_back(coordy);}
+//        float coordcX = (cdt.circumcenter(it).x())/4.0;
+//                  float coordcY = (cdt.circumcenter(it).y())/4.0;
+//                  float z=0.0;
+//                  vectorcir.push_back((cdt.circumcenter(it).x())/4.0);
+//                  vectorcir.push_back((cdt.circumcenter(it).y())/4.0);
+//            for(int i=0;i<3;i++){
+//              float coordx = (cdt.triangle(it)[i].x()/*/w2*/);
+//                          vectorarr.push_back(coordx);
+//                          float coordy = (cdt.triangle(it)[i].y()/*/h2*/);
+//                          vectorarr.push_back(coordy);
+//                          z = sqrt(pow((coordcX-coordx),2.0) + pow((coordcY - coordy),2.0));
+//                          vectorarr.push_back(z);
+//                          vectorarr.push_back(coordx);
+//                          vectorarr.push_back(coordy);
+//                          vectorarr.push_back(-z);}
 
 ////              std::cout << vectorarr[count] << " " << vectorarr[count] << std::endl;
 //            count++;
@@ -102,3 +133,43 @@ std::vector<float> meshCreator(std::vector<float> input, int w2, int h2)
 ////    std::cout << "Number of vertices: " << cdt.number_of_vertices() << " " << count <<std::endl;
 //    return vectorarr;
 //}
+
+
+std::vector<float> meshAverager(std::vector<float> input)
+{
+    float threshold = 30.0f;
+    float avgpos, avgneg, sumpos=0, sumneg=0;
+    std::vector<float> newvect;
+
+    for (int i = 2; i < input.size(); i+=3) {
+        if(input[i] >= 0)
+            sumpos += input[i];
+        else
+            sumneg += input[i];
+    }
+
+    avgpos = 2*sumpos/input.size();
+    avgneg = 2*sumneg/input.size();
+
+    for (int i = 0; i < input.size(); i+=3) {
+        newvect.push_back(input[i]);
+        newvect.push_back(input[i+1]);
+        if(input[i+2] > 0)
+        {
+            if(fabs(input[i+2] - avgpos) > threshold)
+                newvect.push_back(avgpos);
+            else
+                newvect.push_back(input[i+2]);
+        }
+        else
+        {
+            if(fabs(input[i+2] - avgneg) > threshold)
+                newvect.push_back(avgneg);
+            else
+                newvect.push_back(input[i+2]);
+        }
+    }
+
+    return newvect;
+
+}

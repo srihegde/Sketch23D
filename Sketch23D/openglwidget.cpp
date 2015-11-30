@@ -17,7 +17,7 @@
 #define BUF 100000
 
 //Globals
-int oldX, oldY, currentX, currentY;
+int oldX, oldY, currentX, currentY,size3D;
 bool isDragging=false;
 std::vector<float> buffer;
 std::vector<float> inPts;
@@ -66,6 +66,14 @@ void OpenGLWidget::initializeGL()
     //Create program
     program = createProgram("./vshader.vs", "./fshader.fs");
 
+    // Loading Texture
+//    texture = new QOpenGLTexture(QImage("./checkered-tex.jpg"));
+//    texture->setWrapMode(QOpenGLTexture::Repeat);
+//    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+//    texture->setMagnificationFilter(QOpenGLTexture::Linear);
+//    texture->bind(0);
+//    glBindTexture(GL_TEXTURE_2D, tex);
+
     //Create cube VAO
 //    createCubeObject();
     clearScreen();
@@ -101,9 +109,14 @@ void OpenGLWidget::paintGL()
 
 //    glDrawArrays(GL_TRIANGLES, 0, (s/2)/3);
 //    glDrawArrays(GL_POINTS,0,(s/2));
+//    if(this->stat == 2){
+        glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
+        update();
+//    }
+    //else if(this->stat == 3)
+//        glDrawArrays(GL_LINE_STRIP,0,size3D/3/*(s/2 - 1)*/);
+//        update();
 
-    glDrawArrays(GL_LINE_STRIP,0,(s/2 - 1));
-    update();
 
     if(this->stat == 3 || this->stat == 1)
     {
@@ -306,6 +319,7 @@ void OpenGLWidget::silehouteToMesh()
 //        printf("\n");
 
     unsigned long s = inPts.size();
+    size3D = s;
     GLfloat *triangle_vertices = &inPts[0];
 
 
@@ -330,18 +344,18 @@ void OpenGLWidget::silehouteToMesh()
     glBindBuffer(GL_ARRAY_BUFFER, vertex_VBO);
 
 
-    glBufferData(GL_ARRAY_BUFFER, s*sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size3D*sizeof(GLfloat), triangle_vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(vVertex_attrib);
 
-    glVertexAttribPointer(vVertex_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    for (int i = 0; i < s/2; i+=3) {
-        glDrawArrays(GL_LINES, i, i+3);
+    glVertexAttribPointer(vVertex_attrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    for (int i = 0; i < size3D/3; i+=3) {
+        glDrawArrays(GL_LINES, i, i+9);
     }
 
     // std::cout << "vector size" << triangle_vertices[i] << std::endl;
     // printf("%f\n",inPts[i]);
 
-
+//    delete []expanded_vertices;
     glDisableVertexAttribArray(vVertex_attrib);
     inPts.clear();
     glBindBuffer(GL_ARRAY_BUFFER, 0);

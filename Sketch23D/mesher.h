@@ -22,6 +22,7 @@ typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
 
 std::vector<float> meshCreator(std::vector<float> input, int w2, int h2);
+std::vector<float> meshAverager(std::vector<float> input);
 //std::vector<float> meshCreator(int w2, int h2);
 
 #endif // MESHER_H

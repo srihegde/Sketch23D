@@ -27,6 +27,7 @@
 
 #include <QGLWidget>
 #include <QMouseEvent>
+#include <QOpenGLTexture>
 
 class OpenGLWidget : public QGLWidget
 {
@@ -58,11 +59,12 @@ protected:
 
 private:
     GLuint program;
-    GLint vVertex_attrib, vColor_attrib;
+    GLint vVertex_attrib, vColor_attrib, tex;
     GLint vModel_uniform, vView_uniform, vProjection_uniform;
     int screen_width, screen_height;
 
     GLuint cube_VAO; //Vertex array object for cube
+    QOpenGLTexture *texture;
 };
 
 #endif // OPENGLWIDGET_H

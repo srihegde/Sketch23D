@@ -34,4 +34,5 @@ QMAKE_CXXFLAGS += -frounding-math -O3
 
 DISTFILES += \
     fshader.fs \
-    vshader.vs
+    vshader.vs \
+    checkered-tex.jpg

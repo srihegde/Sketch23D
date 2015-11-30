@@ -63,6 +63,7 @@ OBJECTS       = main.o \
 		moc_mainwindow.o
 DIST          = fshader.fs \
 		vshader.vs \
+		checkered-tex.jpg \
 		../../Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt/5.5/gcc_64/mkspecs/common/unix.conf \
 		../../Qt/5.5/gcc_64/mkspecs/common/linux.conf \
@@ -778,7 +779,10 @@ ui_mainwindow.h: mainwindow.ui \
 		../../Qt/5.5/gcc_64/include/QtOpenGL/qtopenglglobal.h \
 		../../Qt/5.5/gcc_64/include/QtGui/QSurfaceFormat \
 		../../Qt/5.5/gcc_64/include/QtGui/qsurfaceformat.h \
-		../../Qt/5.5/gcc_64/include/QtGui/QMouseEvent
+		../../Qt/5.5/gcc_64/include/QtGui/QMouseEvent \
+		../../Qt/5.5/gcc_64/include/QtGui/QOpenGLTexture \
+		../../Qt/5.5/gcc_64/include/QtGui/qopengltexture.h \
+		../../Qt/5.5/gcc_64/include/QtCore/QScopedPointer
 	/home/srinidhi/IIITD/Sem5/CompGr/Qt/5.5/gcc_64/bin/uic mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -1012,7 +1016,72 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		../../Qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
 		../../Qt/5.5/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../Qt/5.5/gcc_64/include/QtGui/qicon.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		../../Qt/5.5/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QAction \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qaction.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qinputmethod.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QButtonGroup \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qbuttongroup.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QHBoxLayout \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qboxlayout.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qlayout.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qlayoutitem.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qgridlayout.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QHeaderView \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qheaderview.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qvalidator.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qregularexpression.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qslider.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qstyle.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qtabbar.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qrubberband.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QMenu \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qmenu.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QMenuBar \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qmenubar.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QStatusBar \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qstatusbar.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QToolBar \
+		../../Qt/5.5/gcc_64/include/QtWidgets/qtoolbar.h \
+		../../Qt/5.5/gcc_64/include/QtWidgets/QWidget \
+		openglwidget.h \
+		shader_utils.h \
+		gl_utils.h \
+		../../Qt/5.5/gcc_64/include/QtOpenGL/QGLWidget \
+		../../Qt/5.5/gcc_64/include/QtOpenGL/qgl.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qopengl.h \
+		../../Qt/5.5/gcc_64/include/QtCore/qt_windows.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qopengles2ext.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qopenglext.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qpaintengine.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qpainter.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt/5.5/gcc_64/include/QtGui/qpen.h \
+		../../Qt/5.5/gcc_64/include/QtOpenGL/qglcolormap.h \
+		../../Qt/5.5/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		../../Qt/5.5/gcc_64/include/QtGui/QSurfaceFormat \
+		../../Qt/5.5/gcc_64/include/QtGui/qsurfaceformat.h \
+		../../Qt/5.5/gcc_64/include/QtGui/QMouseEvent \
+		../../Qt/5.5/gcc_64/include/QtGui/QOpenGLTexture \
+		../../Qt/5.5/gcc_64/include/QtGui/qopengltexture.h \
+		../../Qt/5.5/gcc_64/include/QtCore/QScopedPointer
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 openglwidget.o: openglwidget.cpp openglwidget.h \
@@ -1134,6 +1203,9 @@ openglwidget.o: openglwidget.cpp openglwidget.h \
 		../../Qt/5.5/gcc_64/include/QtGui/QSurfaceFormat \
 		../../Qt/5.5/gcc_64/include/QtGui/qsurfaceformat.h \
 		../../Qt/5.5/gcc_64/include/QtGui/QMouseEvent \
+		../../Qt/5.5/gcc_64/include/QtGui/QOpenGLTexture \
+		../../Qt/5.5/gcc_64/include/QtGui/qopengltexture.h \
+		../../Qt/5.5/gcc_64/include/QtCore/QScopedPointer \
 		mesher.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o openglwidget.o openglwidget.cpp
 
