@@ -32,3 +32,13 @@ void MainWindow::on_actionDraw_Silehoutte_triggered()
 {
     ui->widget->stat = 2;
 }
+
+void MainWindow::on_actionZoom_In_triggered()
+{
+    ui->widget->zoomIn();
+}
+
+void MainWindow::on_actionZoom_Out_triggered()
+{
+    ui->widget->zoomOut();
+}

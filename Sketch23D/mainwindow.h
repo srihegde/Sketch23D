@@ -24,6 +24,10 @@ private slots:
 
     void on_actionDraw_Silehoutte_triggered();
 
+    void on_actionZoom_In_triggered();
+
+    void on_actionZoom_Out_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

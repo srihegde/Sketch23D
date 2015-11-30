@@ -43,6 +43,22 @@ void OpenGLWidget::clearScreen()
     update();
 }
 
+void OpenGLWidget::zoomIn()
+{
+    zoomDist -= 5.0f;
+    viewT = glm::lookAt(glm::vec3(0.0, 0.0, zoomDist), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    glUniformMatrix4fv(vView_uniform, 1, GL_FALSE, glm::value_ptr(viewT));
+    update();
+}
+
+void OpenGLWidget::zoomOut()
+{
+    zoomDist += 5.0f;
+    viewT = glm::lookAt(glm::vec3(0.0, 0.0, zoomDist), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    glUniformMatrix4fv(vView_uniform, 1, GL_FALSE, glm::value_ptr(viewT));
+    update();
+}
+
 
 
 void OpenGLWidget::initializeGL()
@@ -147,7 +163,8 @@ void OpenGLWidget::setupModelTransformation()
 void OpenGLWidget::setupViewTransformation()
 {
     //Viewing transformations (World -> Camera coordinates
-    viewT = glm::lookAt(glm::vec3(0.0, 0.0, 100.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    zoomDist = 100.0f;
+    viewT = glm::lookAt(glm::vec3(0.0, 0.0, zoomDist), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
     //Camera at (0, 0, 20) looking down the negative Z-axis in a right handed coordinate system
 
     //Pass on the viewing matrix to the vertex shader

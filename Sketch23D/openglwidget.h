@@ -36,6 +36,8 @@ public:
     OpenGLWidget();
     ~OpenGLWidget();
     void clearScreen();
+    void zoomIn();
+    void zoomOut();
     int stat;
 
 protected:
@@ -62,6 +64,7 @@ private:
     GLint vVertex_attrib, vColor_attrib, tex;
     GLint vModel_uniform, vView_uniform, vProjection_uniform;
     int screen_width, screen_height;
+    float zoomDist;
 
     GLuint cube_VAO; //Vertex array object for cube
     QOpenGLTexture *texture;

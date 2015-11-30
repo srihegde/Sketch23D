@@ -35,12 +35,15 @@ public:
     QAction *actionCreate_Mesh;
     QAction *actionView_Model;
     QAction *actionDraw_Silehoutte;
+    QAction *actionZoom_In;
+    QAction *actionZoom_Out;
     QWidget *centralWidget;
     QHBoxLayout *horizontalLayout;
     OpenGLWidget *widget;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuEdit;
+    QMenu *menuView;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -63,6 +66,10 @@ public:
         actionView_Model->setObjectName(QStringLiteral("actionView_Model"));
         actionDraw_Silehoutte = new QAction(MainWindow);
         actionDraw_Silehoutte->setObjectName(QStringLiteral("actionDraw_Silehoutte"));
+        actionZoom_In = new QAction(MainWindow);
+        actionZoom_In->setObjectName(QStringLiteral("actionZoom_In"));
+        actionZoom_Out = new QAction(MainWindow);
+        actionZoom_Out->setObjectName(QStringLiteral("actionZoom_Out"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         horizontalLayout = new QHBoxLayout(centralWidget);
@@ -83,6 +90,8 @@ public:
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuEdit = new QMenu(menuBar);
         menuEdit->setObjectName(QStringLiteral("menuEdit"));
+        menuView = new QMenu(menuBar);
+        menuView->setObjectName(QStringLiteral("menuView"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -93,6 +102,7 @@ public:
 
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuEdit->menuAction());
+        menuBar->addAction(menuView->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionSave);
@@ -100,6 +110,8 @@ public:
         menuEdit->addAction(actionDraw_Silehoutte);
         menuEdit->addAction(actionCreate_Mesh);
         menuEdit->addAction(actionView_Model);
+        menuView->addAction(actionZoom_In);
+        menuView->addAction(actionZoom_Out);
         mainToolBar->addSeparator();
 
         retranslateUi(MainWindow);
@@ -120,8 +132,13 @@ public:
         actionView_Model->setText(QApplication::translate("MainWindow", "View Model", 0));
         actionView_Model->setShortcut(QApplication::translate("MainWindow", "Ctrl+D", 0));
         actionDraw_Silehoutte->setText(QApplication::translate("MainWindow", "Draw Silehoutte", 0));
+        actionZoom_In->setText(QApplication::translate("MainWindow", "Zoom In", 0));
+        actionZoom_In->setShortcut(QApplication::translate("MainWindow", "Ctrl+Up", 0));
+        actionZoom_Out->setText(QApplication::translate("MainWindow", "Zoom Out", 0));
+        actionZoom_Out->setShortcut(QApplication::translate("MainWindow", "Ctrl+Down", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuEdit->setTitle(QApplication::translate("MainWindow", "Edit", 0));
+        menuView->setTitle(QApplication::translate("MainWindow", "View", 0));
     } // retranslateUi
 
 };
