@@ -1,0 +1,18 @@
+TODO for Sketch23D
+===================
+
+BASIC (MUST) FEATURES
+
+1. Add author copyrights and license
+2. File saving and loading
+3. Fix zoom-in/zoom-out.
+4. Reset canvas for drawing.
+
+ADVANCED FEATURES
+
+1. Add drawing feature for genus > 0 and multiple models
+2. Detect intersections in drawings and consider that area for 3D creation
+3. Apply texture to the 3D object
+4. Setup lighting feature for object rendering
+5. Drawing in 3D (not only on the plane)
+6. Undo/Redo option
